@@ -15,6 +15,11 @@ function initApp() {
       if (isEditorMode) {
         currentConfig.webhookUrl = '';
       }
+
+      // Migrate old ?config= URLs to hash fragment
+      if (window.location.search.includes('config=')) {
+        updateUrl(currentConfig, isEditorMode || null);
+      }
     }
   }
 
