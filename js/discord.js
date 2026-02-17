@@ -83,7 +83,7 @@ function createDiscordEmbeds(formData, imagesLength) {
       allFields.push({
       name: `${fieldName} ${displayValue}`,
       value: "\u200B", // обязательно!
-      inline: false,
+      inline: true,
 });
 
     }
