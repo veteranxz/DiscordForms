@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title id="pageTitle">Форма обратной связи</title>
+    <link
+      rel="icon"
+      type="image/x-icon"
+      id="faviconLink"
+      href="images/favicon/favicon.ico"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Панель редактора -->
+      <div id="editorPanel" class="editor-panel">
+        <div class="editor-header">
+          <h2><i class="fas fa-cog"></i> Настройка формы</h2>
+        </div>
+
+        <div class="editor-content">
+          <div class="editor-section">
+            <h3>Основные настройки</h3>
+            <div class="setting-group">
+              <label for="formTitle">Название формы:</label>
+              <input
+                type="text"
+                id="formTitle"
+                placeholder="Моя форма обратной связи"
+              />
+            </div>
+            <div class="setting-group">
+              <label for="formDescription">Описание формы:</label>
+              <textarea
+                id="formDescription"
+                rows="2"
+                placeholder="Заполните форму и мы свяжемся с вами"
+              ></textarea>
+            </div>
+            <div class="setting-group">
+              <label for="webhookUrl">Discord Webhook URL:</label>
+              <input
+                type="url"
+                id="webhookUrl"
+                placeholder="https://discord.com/api/webhooks/..."
+              />
+            </div>
+            <div class="setting-group">
+              <label for="webhookUsername">Имя автора в Discord:</label>
+              <input
+                type="text"
+                id="webhookUsername"
+                placeholder="Бот обратной связи"
+              />
+            </div>
+            <div class="setting-group">
+              <label class="checkbox-setting">
+                <input type="checkbox" id="displayUsername" checked />
+                <span>Отображать имя автора в футере формы</span>
+              </label>
+            </div>
+            <div class="setting-group">
+              <label for="webhookAvatarUrl">URL иконки автора:</label>
+              <input
+                type="url"
+                id="webhookAvatarUrl"
+                placeholder="https://i.imgur.com/example.png"
+              />
+            </div>
+            <div class="setting-group">
+              <label class="checkbox-setting">
+                <input type="checkbox" id="sendAsPlainText" />
+                <span>Отправлять как текстовое сообщение (без embed)</span>
+              </label>
+            </div>
+            <div class="setting-group">
+              <label for="organizationSelect">Организация:</label>
+              <select id="organizationSelect">
+                <option value="LSPD">LSPD</option>
+                <option value="LSSD">LSSD</option>
+                <option value="WN">Weazel News</option>
+                <option value="EMS">EMS</option>
+              </select>
+            </div>
+            <div class="setting-group">
+              <label>Тема оформления:</label>
+              <div class="theme-switcher">
+                <button
+                  id="lightThemeBtn"
+                  class="theme-btn active"
+                  data-theme="light"
+                >
+                  <i class="fas fa-sun"></i> Светлая
+                </button>
+                <button id="darkThemeBtn" class="theme-btn" data-theme="dark">
+                  <i class="fas fa-moon"></i> Тёмная
+                </button>
+              </div>
+            </div>
+            <div class="setting-group">
+              <label for="customMessage"
+                >Кастомное сообщение (по умолчанию):</label
+              >
+              <textarea
+                id="customMessage"
+                rows="3"
+                placeholder="Можно тегнуть роли (<@&ID_РОЛИ>) или просто написать текст уведомления при новом заполнении"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="editor-section">
+            <h3>Условные сообщения</h3>
+            <p class="section-hint">
+              Отправляйте разные сообщения в Discord в зависимости от выбранных
+              значений
+            </p>
+            <div id="conditionalMessagesList" class="conditional-messages-list">
+              <!-- Условные сообщения будут добавляться динамически -->
+            </div>
+            <button id="addConditionalMessageBtn" class="add-field-btn">
+              <i class="fas fa-plus"></i> Добавить условное сообщение
+            </button>
+          </div>
+
+          <div class="editor-section">
+            <div class="section-header-with-toggle">
+              <h3>Поля формы</h3>
+              <label class="advanced-settings-toggle">
+                <input type="checkbox" id="advancedSettingsCheckbox" />
+                <span class="toggle-text">Расширенные настройки</span>
+              </label>
+            </div>
+            <div id="fieldsList" class="fields-list">
+              <!-- Поля будут добавляться динамически -->
+            </div>
+            <button id="addFieldBtn" class="add-field-btn">
+              <i class="fas fa-plus"></i> Добавить поле
+            </button>
+            <button
+              id="addImageFieldBtn"
+              class="add-field-btn add-image-field-btn"
+            >
+              <i class="fas fa-image"></i> Добавить поле для картинок
+            </button>
+            <div class="setting-group" style="margin-top: 16px">
+              <label class="checkbox-setting">
+                <input type="checkbox" id="sendQuestionNumbers" checked />
+                <span>Отправлять номера вопросов</span>
+              </label>
+            </div>
+            <div class="setting-group">
+              <label class="checkbox-setting">
+                <input type="checkbox" id="sendEmojis" />
+                <span>Отправлять эмодзи</span>
+              </label>
+            </div>
+            <div class="setting-group">
+              <label class="checkbox-setting">
+                <input type="checkbox" id="sendColons" checked />
+                <span>Отправлять двоеточия в конце вопросов</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="editor-section">
+            <h3>Ссылка на форму</h3>
+            <div class="url-buttons-group">
+              <button id="generateUrlBtn" class="generate-url-btn">
+                <i class="fas fa-copy"></i> Скопировать ссылку на форму
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-wrapper" id="formPreview">
+        <div id="organizationLogo" class="organization-logo">
+          <img src="images/LSPD.png" alt="Organization Logo" id="orgLogoImg" />
+        </div>
+        <div class="vinewood-logo">VINEWOOD</div>
+        <div class="header">
+          <div class="header-top">
+            <h1>Связаться с нами</h1>
+            <div class="form-menu">
+              <button id="editFormBtn" class="edit-form-btn" title="Меню формы">
+                <i class="fas fa-ellipsis-v"></i>
+              </button>
+              <div id="formDropdown" class="form-dropdown">
+                <button class="dropdown-item" id="duplicateBtn">
+                  <i class="fas fa-copy"></i>
+                  Дублировать и настроить
+                </button>
+              </div>
+            </div>
+          </div>
+          <p>Заполните форму и мы свяжемся с вами в ближайшее время</p>
+        </div>
+
+        <form id="contactForm" class="contact-form">
+          <div class="form-group">
+            <label for="name">
+              <i class="fas fa-user"></i>
+              Имя *
+            </label>
+            <input type="text" id="name" name="name" required />
+            <div class="input-line"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">
+              <i class="fas fa-envelope"></i>
+              Email *
+            </label>
+            <input type="email" id="email" name="email" required />
+            <div class="input-line"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="subject">
+              <i class="fas fa-tag"></i>
+              Тема
+            </label>
+            <select id="subject" name="subject">
+              <option value="">Выберите тему</option>
+              <option value="Общий вопрос">Общий вопрос</option>
+              <option value="Техническая поддержка">
+                Техническая поддержка
+              </option>
+              <option value="Предложение">Предложение</option>
+              <option value="Жалоба">Жалоба</option>
+              <option value="Другое">Другое</option>
+            </select>
+            <div class="input-line"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="priority">
+              <i class="fas fa-exclamation-triangle"></i>
+              Приоритет
+            </label>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="priority" value="Низкий" />
+                <span class="radio-custom"></span>
+                Низкий
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="priority" value="Средний" checked />
+                <span class="radio-custom"></span>
+                Средний
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="priority" value="Высокий" />
+                <span class="radio-custom"></span>
+                Высокий
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="message">
+              <i class="fas fa-comment"></i>
+              Сообщение *
+            </label>
+            <textarea id="message" name="message" rows="5" required></textarea>
+            <div class="input-line"></div>
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="newsletter" name="newsletter" />
+              <span class="checkbox-custom"></span>
+              Подписаться на новости
+            </label>
+          </div>
+
+          <button type="submit" class="submit-btn">
+            <span class="btn-text">Отправить сообщение</span>
+            <i class="fas fa-arrow-right"></i>
+          </button>
+        </form>
+
+        <div id="response" class="response-message"></div>
+      </div>
+
+      <div class="background-decoration">
+        <div class="decoration-1"></div>
+        <div class="decoration-2"></div>
+        <div class="decoration-3"></div>
+      </div>
+    </div>
+
+    <p class="watermark">© SpringFlash (Geralt Spring)</p>
+    <p>
+      <!-- Scripts -->
+      <!-- LZ-String для сжатия URL -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
+      <!-- Emoji Picker Element -->
+      <script
+        type="module"
+        src="https://unpkg.com/emoji-picker-element@^1/index.js"
+      ></script>
+      <script src="js/constants.js"></script>
+      <script src="js/utils.js"></script>
+      <script src="js/theme.js"></script>
+      <script src="js/config.js"></script>
+      <script src="js/discord.js"></script>
+      <script src="js/computed-fields.js"></script>
+      <script src="js/conditional.js"></script>
+      <script src="js/form.js"></script>
+      <script src="js/editor.js"></script>
+      <script src="js/app.js"></script>
+    </p>
+  </body>
+</html>
