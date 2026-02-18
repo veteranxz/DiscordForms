@@ -94,15 +94,16 @@ function createDiscordEmbeds(formData, imagesLength) {
       "https://pngimg.com/uploads/discord/discord_PNG3.png",
   };
 
-  return [{
-
-    const isFirst = i === 0;
-    const isLast = i === chunks.length - 1;
-    const embed = {
+const embed = {
   color: embedColor,
+  title: `📝 ${currentConfig.title}`,
   description: descriptionText,
+  timestamp: new Date().toISOString(),
+  footer: footer,
 };
-  }]
+
+return [embed];
+
 
 
     if (isFirst) {
