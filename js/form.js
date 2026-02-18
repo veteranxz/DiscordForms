@@ -3,10 +3,25 @@
 // Store uploaded images for the form
 let uploadedImages = [];
 
+// Функция для получения иконки поля (поддержка emoji и Font Awesome)
 function getFieldIcon(icon) {
-  return "";
-}
+  if (!icon) return "";
 
+  // Проверяем, является ли это emoji (содержит emoji символы)
+  const emojiRegex =
+    /[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F600}-\u{1F64F}]|[\u{1F680}-\u{1F6FF}]/u;
+  if (emojiRegex.test(icon)) {
+    return icon;
+  }
+
+  // Проверяем, есть ли это в iconMap (для обратной совместимости)
+  if (typeof iconMap !== "undefined" && iconMap[icon]) {
+    return iconMap[icon];
+  }
+
+  // Иначе используем как Font Awesome класс
+  return `<i class="fas fa-${icon}"></i>`;
+}
 
 // Функция для переключения режима редактор/просмотр
 function toggleEditorMode(showEditor) {
@@ -187,9 +202,9 @@ function renderForm() {
     }
 
     const label = document.createElement("label");
-label.setAttribute("for", field.id);
-label.innerHTML = `${field.label}${field.required ? " *" : ""}`;
-
+    label.setAttribute("for", field.id);
+    const iconHtml = getFieldIcon(field.icon);
+    label.innerHTML = `${iconHtml} ${field.label}${field.required ? " *" : ""}`;
 
     let inputElement;
 
