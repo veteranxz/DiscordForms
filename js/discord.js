@@ -165,7 +165,7 @@ function createPlainTextMessage(formData) {
 
       fieldLabel += `${field.label}${showColons ? ":" : ""}`;
 
-      message += `**${fieldLabel}**${
+      message += `${fieldLabel}${
         ["textarea", "computed"].includes(field.type) ? "\n" : " "
       }${displayValue}\n`;
       questionIndex++;
