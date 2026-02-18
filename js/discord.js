@@ -70,7 +70,7 @@ function createDiscordEmbed(formData, imagesLength) {
         fieldName += `${questionIndex}) `;
       }
 
-      fieldName += `${field.label}${showColons ? ":" : ""}`;
+      fieldName += `# ${field.label}${showColons ? ":" : ""}`;
       if (isImage) {
         let suffix = "й";
 
