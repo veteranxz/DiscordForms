@@ -101,10 +101,11 @@ function createDiscordEmbed(formData, imagesLength) {
 
       questionIndex++;
       embed.fields.push({
-        name: fieldName,
-        value: displayValue,
-        inline: true,
-      });
+  name: `${fieldName} ${displayValue}`,
+  value: "\u200b", // пустой символ, чтобы embed не падал
+  inline: true,
+});
+
     }
   });
 
