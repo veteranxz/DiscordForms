@@ -1,6 +1,6 @@
 // === ФУНКЦИИ РАБОТЫ С DISCORD ===
 
-// Функция для создания Discord embeds (splits fields into chunks of 25)
+// Функция для создания красивого Discord embed без отступов
 function createDiscordEmbeds(formData, imagesLength) {
   const priorityColors = {
     Низкий: 0x10b981,
@@ -13,13 +13,14 @@ function createDiscordEmbeds(formData, imagesLength) {
     embedColor = priorityColors[formData.priority];
   }
 
-  // Build all fields first
   let descriptionText = "";
   let questionIndex = 1;
+
   const showQuestionNumbers =
     currentConfig.sendQuestionNumbers !== undefined
       ? currentConfig.sendQuestionNumbers
       : true;
+
   const showEmojis = currentConfig.sendEmojis || false;
   const showColons = currentConfig.sendColons !== false;
 
@@ -34,90 +35,61 @@ function createDiscordEmbeds(formData, imagesLength) {
 
     const value = formData[field.id];
     const isImage = imagesLength && field.type === "image";
-    if (isImage || (value !== undefined && value !== "")) {
-      let displayValue = isImage ? " " : value;
+    if (!value && !isImage) return;
 
-      let fieldName = "";
+    let displayValue = isImage ? "" : value;
 
-      if (showEmojis && field.icon) {
-        const emoji = getFieldIcon(field.icon);
-        if (!emoji.startsWith("<i ")) {
-          fieldName += `${emoji} `;
-        }
-      }
+    let fieldName = "";
 
-      if (showQuestionNumbers) {
-        fieldName += `${questionIndex}) `;
-      }
-
-      fieldName += `${field.label}${showColons ? ":" : ""}`;
-      if (isImage) {
-        let suffix = "й";
-
-        if (imagesLength % 10 === 1 && imagesLength % 100 !== 11) {
-          suffix = "е";
-        } else if (
-          imagesLength % 10 >= 2 &&
-          imagesLength % 10 <= 4 &&
-          (imagesLength % 100 < 10 || imagesLength % 100 >= 20)
-        ) {
-          suffix = "я";
-        }
-
-        fieldName += ` (${imagesLength} изображени${suffix})`;
-      }
-
-      if (field.type === "checkbox") {
-        if (field.showTextInResponse !== false) {
-          displayValue = value === "on" ? "✅ Да" : "❌ Нет";
-        } else {
-          displayValue = value === "on" ? "✅" : "❌";
-        }
-      }
-
-      if (typeof displayValue === "string" && displayValue.length > 1024) {
-        displayValue = displayValue.substring(0, 1021) + "...";
-      }
-
-      questionIndex++;
-      descriptionText += `**${field.label}:** ${displayValue}\n`;
+    if (showEmojis && field.icon) {
+      const emoji = getFieldIcon(field.icon);
+      if (!emoji.startsWith("<i ")) fieldName += `${emoji} `;
     }
+
+    if (showQuestionNumbers) fieldName += `${questionIndex}) `;
+
+    fieldName += `${field.label}${showColons ? ":" : ""}`;
+
+    if (field.type === "checkbox") {
+      displayValue =
+        field.showTextInResponse !== false
+          ? displayValue === "on"
+            ? "✅ Да"
+            : "❌ Нет"
+          : displayValue === "on"
+          ? "✅"
+          : "❌";
+    }
+
+    if (typeof displayValue === "string") {
+      displayValue = displayValue.replace(/\n+/g, " ").trim();
+    }
+
+    descriptionText += `**${fieldName}** ${displayValue}\n`;
+    questionIndex++;
   });
 
   const footer = {
     text:
       currentConfig.displayUsername !== false
-        ? `${currentConfig.webhookUsername || currentConfig.title}`
+        ? currentConfig.webhookUsername || currentConfig.title
         : "",
     icon_url:
       currentConfig.webhookAvatarUrl ||
       "https://pngimg.com/uploads/discord/discord_PNG3.png",
   };
 
-const embed = {
-  color: embedColor,
-  title: `📝 ${currentConfig.title}`,
-  description: descriptionText,
-  timestamp: new Date().toISOString(),
-  footer: footer,
-};
+  const embed = {
+    color: embedColor,
+    title: `📝 ${currentConfig.title}`,
+    description: descriptionText || "Нет данных",
+    timestamp: new Date().toISOString(),
+    footer: footer,
+  };
 
-return [embed];
-
-
-
-    if (isFirst) {
-      embed.title = `📝 ${currentConfig.title}`;
-    }
-
-    if (isLast) {
-      embed.timestamp = new Date().toISOString();
-      embed.footer = footer;
-    }
-
-    return embed;
-  });
+  return [embed];
 }
+
 
 // Функция для создания текстового сообщения
 function createPlainTextMessage(formData) {
