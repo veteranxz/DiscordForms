@@ -54,5 +54,13 @@ const lightThemeBtn = document.getElementById("lightThemeBtn");
 const darkThemeBtn = document.getElementById("darkThemeBtn");
 
 // Маппинг иконок
-const iconMap = {};
-
+const iconMap = {
+  user: "👤",
+  envelope: "📧",
+  tag: "🏷️",
+  "exclamation-triangle": "⚡",
+  comment: "💬",
+  newspaper: "📰",
+  question: "❓",
+  calculator: "🧮",
+};

@@ -191,7 +191,7 @@ function addConditionalMessageToEditor(condMsg) {
 
   condMsgItem.innerHTML = `
     <div class="condmsg-header">
-      <span class="condmsg-title">Условное сообщение</span>
+      <span class="condmsg-title">💬 Условное сообщение</span>
       <button class="field-action-btn delete" title="Удалить">
         <i class="fas fa-trash"></i>
       </button>
