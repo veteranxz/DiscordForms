@@ -103,7 +103,7 @@ function createDiscordEmbed(formData, imagesLength) {
       embed.fields.push({
         name: fieldName,
         value: displayValue,
-        inline: false,
+        inline: true,
       });
     }
   });
