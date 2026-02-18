@@ -40,10 +40,11 @@ function createDiscordEmbeds(formData, images = []) {
 
     let fieldName = "";
 
-    if (showEmojis && field.icon) {
-      const emoji = getFieldIcon(field.icon);
-      if (emoji && !emoji.startsWith("<i ")) fieldName += `${emoji} `;
-    }
+    // if (showEmojis && field.icon) {
+//   const emoji = getFieldIcon(field.icon);
+//   if (emoji && !emoji.startsWith("<i ")) fieldName += `${emoji} `;
+// }
+
 
     if (showQuestionNumbers) fieldName += `${questionIndex}) `;
 
