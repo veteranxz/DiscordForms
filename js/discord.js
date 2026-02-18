@@ -70,7 +70,7 @@ function createDiscordEmbed(formData, imagesLength) {
         fieldName += `${questionIndex}) `;
       }
 
-      fieldName += `# ${field.label}${showColons ? ":" : ""}`;
+      fieldName += `${field.label}${showColons ? ":" : ""}`;
       if (isImage) {
         let suffix = "й";
 
@@ -113,7 +113,7 @@ function createDiscordEmbed(formData, imagesLength) {
 
 // Функция для создания текстового сообщения
 function createPlainTextMessage(formData) {
-  let message = `${currentConfig.title}\n`;
+  let message = `# ${currentConfig.title}\n`;
 
   let questionIndex = 1;
   // Для старых форм считаем параметры по умолчанию: номера включены, эмодзи выключены
