@@ -64,7 +64,7 @@ function createDiscordEmbeds(formData, images = []) {
       displayValue = displayValue.replace(/\n+/g, " ").trim();
     }
 
-    descriptionText += `**${fieldName}** ${displayValue}\n`;
+    descriptionText += `${fieldName} ${displayValue}\n`;
     questionIndex++;
   });
 
