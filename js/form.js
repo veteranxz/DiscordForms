@@ -202,9 +202,9 @@ function renderForm() {
     }
 
     const label = document.createElement("label");
-    label.setAttribute("for", field.id);
-    const iconHtml = getFieldIcon(field.icon);
-    label.innerHTML = `${iconHtml} ${field.label}${field.required ? " *" : ""}`;
+label.setAttribute("for", field.id);
+label.innerHTML = `${field.label}${field.required ? " *" : ""}`;
+
 
     let inputElement;
 
