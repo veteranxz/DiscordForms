@@ -14,7 +14,7 @@ function createDiscordEmbeds(formData, imagesLength) {
   }
 
   // Build all fields first
-  const allFields = [];
+  let descriptionText = "";
   let questionIndex = 1;
   const showQuestionNumbers =
     currentConfig.sendQuestionNumbers !== undefined
@@ -80,23 +80,9 @@ function createDiscordEmbeds(formData, imagesLength) {
       }
 
       questionIndex++;
-      allFields.push({
-  name: "\u200B",
-  value: `**${fieldName}** ${displayValue}`,
-  inline: false,
-});
-
-
+      descriptionText += `**${field.label}:** ${displayValue}\n`;
     }
   });
-
-  // Split fields into chunks of 25 (Discord embed field limit)
-  const FIELD_LIMIT = 25;
-  const chunks = [];
-  for (let i = 0; i < allFields.length; i += FIELD_LIMIT) {
-    chunks.push(allFields.slice(i, i + FIELD_LIMIT));
-  }
-  if (chunks.length === 0) chunks.push([]);
 
   const footer = {
     text:
@@ -108,10 +94,16 @@ function createDiscordEmbeds(formData, imagesLength) {
       "https://pngimg.com/uploads/discord/discord_PNG3.png",
   };
 
-  return chunks.map((fields, i) => {
+  return [{
+
     const isFirst = i === 0;
     const isLast = i === chunks.length - 1;
-    const embed = { color: embedColor, fields };
+    const embed = {
+  color: embedColor,
+  description: descriptionText,
+};
+  }]
+
 
     if (isFirst) {
       embed.title = `📝 ${currentConfig.title}`;
