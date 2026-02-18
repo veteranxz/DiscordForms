@@ -113,7 +113,7 @@ function createDiscordEmbed(formData, imagesLength) {
 
 // Функция для создания текстового сообщения
 function createPlainTextMessage(formData) {
-  let message = `**__📝 ${currentConfig.title}__**\n`;
+  let message = `__📝 ${currentConfig.title}__\n`;
 
   let questionIndex = 1;
   // Для старых форм считаем параметры по умолчанию: номера включены, эмодзи выключены
