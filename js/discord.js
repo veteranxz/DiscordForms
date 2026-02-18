@@ -1,7 +1,7 @@
 // === ФУНКЦИИ РАБОТЫ С DISCORD ===
 
-// Функция для создания Discord embed
-function createDiscordEmbed(formData, imagesLength) {
+// Создание Discord embed с ответами в одной строке
+function createDiscordEmbedSingleLine(formData, imagesLength) {
   const priorityColors = {
     Низкий: 0x10b981,
     Средний: 0xf59e0b,
@@ -30,199 +30,54 @@ function createDiscordEmbed(formData, imagesLength) {
   };
 
   let questionIndex = 1;
-  // Для старых форм считаем параметры по умолчанию: номера включены, эмодзи выключены
+  const showEmojis = currentConfig.sendEmojis || false;
   const showQuestionNumbers =
     currentConfig.sendQuestionNumbers !== undefined
       ? currentConfig.sendQuestionNumbers
       : true;
-  const showEmojis = currentConfig.sendEmojis || false;
   const showColons = currentConfig.sendColons !== false;
 
+  let fieldValue = "";
+
   currentConfig.fields.forEach((field) => {
-    // Пропускаем поля с кастомной отправкой
-    if (
-      field.customWebhook &&
-      field.customWebhook.enabled &&
-      (field.customWebhook.splitLines || field.customWebhook.url)
-    ) {
-      return;
-    }
+    if (field.customWebhook && field.customWebhook.enabled) return;
 
     const value = formData[field.id];
-    const isImage = imagesLength && field.type === "image";
-    if (isImage || (value !== undefined && value !== "")) {
-      let displayValue = isImage ? " " : value;
+    if (value === undefined || value === "") return;
 
-      // Формируем название поля
-      let fieldName = "";
-
-      // Добавляем эмодзи если включено
-      if (showEmojis && field.icon) {
-        const emoji = getFieldIcon(field.icon);
-        // Если это не HTML-тег (Font Awesome), добавляем эмодзи
-        if (!emoji.startsWith("<i ")) {
-          fieldName += `${emoji} `;
-        }
-      }
-
-      // Добавляем номер вопроса если включено
-      if (showQuestionNumbers) {
-        fieldName += `${questionIndex}) `;
-      }
-
-      fieldName += `${field.label}${showColons ? ":" : ""}`;
-      if (isImage) {
-        let suffix = "й";
-
-        if (imagesLength % 10 === 1 && imagesLength % 100 !== 11) {
-          suffix = "е";
-        } else if (
-          imagesLength % 10 >= 2 &&
-          imagesLength % 10 <= 4 &&
-          (imagesLength % 100 < 10 || imagesLength % 100 >= 20)
-        ) {
-          suffix = "я";
-        }
-
-        fieldName += ` (${imagesLength} изображени${suffix})`;
-      }
-
-      if (field.type === "checkbox") {
-        if (field.showTextInResponse !== false) {
-          displayValue = value === "on" ? "✅ Да" : "❌ Нет";
-        } else {
-          displayValue = value === "on" ? "✅" : "❌";
-        }
-      }
-
-      if (typeof displayValue === "string" && displayValue.length > 1024) {
-        displayValue = displayValue.substring(0, 1021) + "...";
-      }
-
-      questionIndex++;
-      embed.fields.push({
-  name: `${fieldName} ${displayValue}`,
-  value: "\u200b", // пустой символ, чтобы embed не падал
-  inline: false,
-});
-
+    let displayValue = value;
+    if (field.type === "checkbox") {
+      displayValue =
+        field.showTextInResponse !== false
+          ? value === "on"
+            ? "✅ Да"
+            : "❌ Нет"
+          : value === "on"
+          ? "✅"
+          : "❌";
     }
+
+    let label = "";
+
+    if (showEmojis && field.icon) {
+      const emoji = getFieldIcon(field.icon);
+      if (!emoji.startsWith("<i ")) label += `${emoji} `;
+    }
+
+    if (showQuestionNumbers) label += `${questionIndex}) `;
+    label += `${field.label}${showColons ? ":" : ""}`;
+
+    fieldValue += `${label} ${displayValue}\n`;
+    questionIndex++;
+  });
+
+  embed.fields.push({
+    name: "\u200b", // пустое имя
+    value: fieldValue, // все ответы через переносы
+    inline: false,
   });
 
   return embed;
-}
-
-// Функция для создания текстового сообщения
-function createPlainTextMessage(formData) {
-  let message = `**__📝 ${currentConfig.title}__**\n`;
-
-  let questionIndex = 1;
-  // Для старых форм считаем параметры по умолчанию: номера включены, эмодзи выключены
-  const showQuestionNumbers =
-    currentConfig.sendQuestionNumbers !== undefined
-      ? currentConfig.sendQuestionNumbers
-      : true;
-  const showEmojis = currentConfig.sendEmojis || false;
-  const showColons = currentConfig.sendColons !== false;
-
-  currentConfig.fields.forEach((field) => {
-    // Пропускаем поля с кастомной отправкой
-    if (
-      field.customWebhook &&
-      field.customWebhook.enabled &&
-      (field.customWebhook.splitLines || field.customWebhook.url)
-    ) {
-      return;
-    }
-
-    const value = formData[field.id];
-    if (value !== undefined && value !== "") {
-      let displayValue = value;
-
-      if (field.type === "checkbox") {
-        if (field.showTextInResponse !== false) {
-          displayValue = value === "on" ? "✅ Да" : "❌ Нет";
-        } else {
-          displayValue = value === "on" ? "✅" : "❌";
-        }
-      }
-
-      // Формируем название поля
-      let fieldLabel = "";
-
-      // Добавляем эмодзи если включено
-      if (showEmojis && field.icon) {
-        const emoji = getFieldIcon(field.icon);
-        // Если это не HTML-тег (Font Awesome), добавляем эмодзи
-        if (!emoji.startsWith("<i ")) {
-          fieldLabel += `${emoji} `;
-        }
-      }
-
-      // Добавляем номер вопроса если включено
-      if (showQuestionNumbers) {
-        fieldLabel += `${questionIndex}) `;
-      }
-
-      fieldLabel += `${field.label}${showColons ? ":" : ""}`;
-
-      message += `**${fieldLabel}**${
-        ["textarea", "computed"].includes(field.type) ? "\n" : " "
-      }${displayValue}\n`;
-      questionIndex++;
-    }
-  });
-  return message;
-}
-function getConditionalMessage(formData) {
-  const matchedMessages = [];
-
-  // Собираем все условные сообщения, которые подходят по условию
-  if (
-    currentConfig.conditionalMessages &&
-    currentConfig.conditionalMessages.length > 0
-  ) {
-    for (const condMsg of currentConfig.conditionalMessages) {
-      if (condMsg.field && condMsg.value && condMsg.message) {
-        const fieldValue = formData[condMsg.field];
-
-        // Поддержка массива значений для условия "включает"
-        let requiredValues = [];
-        try {
-          requiredValues = JSON.parse(condMsg.value);
-          if (!Array.isArray(requiredValues)) {
-            requiredValues = [condMsg.value];
-          }
-        } catch (e) {
-          requiredValues = [condMsg.value];
-        }
-
-        if (requiredValues.includes(fieldValue)) {
-          matchedMessages.push(condMsg.message);
-        }
-      }
-    }
-  }
-
-  // Если есть кастомное сообщение по умолчанию, добавляем его
-  if (currentConfig.customMessage) {
-    matchedMessages.push(currentConfig.customMessage);
-  }
-
-  // Если есть хотя бы одно сообщение, склеиваем их через двойной перенос строки
-  return matchedMessages.length > 0 ? matchedMessages.join("\n") : null;
-}
-
-// Create FormData payload with images
-function createFormDataPayload(payload, files) {
-  const formData = new FormData();
-  formData.append("payload_json", JSON.stringify(payload));
-
-  files.forEach((file, index) => {
-    formData.append(`files[${index}]`, file, `image${index}.png`);
-  });
-
-  return formData;
 }
 
 // Create multiple embeds for image gallery
@@ -251,7 +106,7 @@ function createGalleryEmbeds(baseEmbed, fileCount) {
   return embeds;
 }
 
-// Функция для отправки данных в Discord
+// Отправка данных в Discord
 async function sendToDiscord(formData) {
   if (!currentConfig.webhookUrl) {
     return { success: false, message: "Webhook URL не настроен" };
@@ -264,6 +119,7 @@ async function sendToDiscord(formData) {
   let fetchOptions;
 
   if (currentConfig.sendAsPlainText) {
+    // Используем plain text
     const plainTextContent = createPlainTextMessage(formData);
     const finalContent = customMessage
       ? `${customMessage}\n\n${plainTextContent}`
@@ -290,7 +146,8 @@ async function sendToDiscord(formData) {
       };
     }
   } else {
-    const embed = createDiscordEmbed(formData, uploadedImages.length);
+    // Используем embed с ответами в одной строке
+    const embed = createDiscordEmbedSingleLine(formData, uploadedImages.length);
 
     if (hasImages) {
       const embeds = createGalleryEmbeds(embed, uploadedImages.length);
@@ -333,7 +190,7 @@ async function sendToDiscord(formData) {
       );
     }
 
-    // Handle custom webhooks (existing code)
+    // Кастомные webhooks для отдельных полей
     const customWebhookFields = currentConfig.fields.filter(
       (field) => field.customWebhook && field.customWebhook.enabled
     );
