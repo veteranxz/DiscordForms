@@ -90,11 +90,11 @@ function createDiscordEmbed(formData, imagesLength) {
       }
 
       // ✅ inline: true чтобы вопрос и ответ были на одной строке
-      embed.fields.push({
-        name: fieldName,
-        value: displayValue,
-        inline: true,
-      });
+     embed.fields.push({
+  name: "\u200B", // пустое имя без отступов
+  value: `**${fieldName}** ${displayValue}`,
+  inline: false,
+});
 
       questionIndex++;
     }
