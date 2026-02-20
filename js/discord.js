@@ -100,7 +100,7 @@ function createDiscordEmbed(formData, imagesLength) {
       }
 
       // ✅ собираем все строки в массив
-      lines.push(`**${fieldName}** ${displayValue}`);
+      lines.push(`${fieldName} ${displayValue}`);
 
       questionIndex++;
     }
