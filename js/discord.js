@@ -37,6 +37,10 @@ function createDiscordEmbed(formData, imagesLength) {
   const showEmojis = currentConfig.sendEmojis || false;
   const showColons = currentConfig.sendColons !== false;
 
+  // ✅ массив для всех строк
+  let lines = [];
+
+  // === ЦИКЛ ПО ВСЕМ ПОЛЯМ ===
   currentConfig.fields.forEach((field) => {
     // Пропускаем поля с кастомной отправкой
     if (
@@ -54,9 +58,14 @@ function createDiscordEmbed(formData, imagesLength) {
 
       // Обработка чекбоксов
       if (field.type === "checkbox") {
-        displayValue = (field.showTextInResponse !== false)
-          ? value === "on" ? "✅ Да" : "❌ Нет"
-          : value === "on" ? "✅" : "❌";
+        displayValue =
+          field.showTextInResponse !== false
+            ? value === "on"
+              ? "✅ Да"
+              : "❌ Нет"
+            : value === "on"
+            ? "✅"
+            : "❌";
       }
 
       // Формируем название поля
@@ -81,7 +90,8 @@ function createDiscordEmbed(formData, imagesLength) {
           imagesLength % 10 >= 2 &&
           imagesLength % 10 <= 4 &&
           (imagesLength % 100 < 10 || imagesLength % 100 >= 20)
-        ) suffix = "я";
+        )
+          suffix = "я";
         fieldName += ` (${imagesLength} изображени${suffix})`;
       }
 
@@ -89,16 +99,21 @@ function createDiscordEmbed(formData, imagesLength) {
         displayValue = displayValue.substring(0, 1021) + "...";
       }
 
-      // ✅ inline: true чтобы вопрос и ответ были на одной строке
-     embed.fields.push({
-  name: "\u200B", // пустое имя без отступов
-  value: `**${fieldName}** ${displayValue}`,
-  inline: false,
-});
+      // ✅ собираем все строки в массив
+      lines.push(`**${fieldName}** ${displayValue}`);
 
       questionIndex++;
     }
   });
+
+  // ✅ после цикла добавляем один field со всеми строками
+  if (lines.length > 0) {
+    embed.fields.push({
+      name: "\u200B",
+      value: lines.join("\n"),
+      inline: false,
+    });
+  }
 
   return embed;
 }
